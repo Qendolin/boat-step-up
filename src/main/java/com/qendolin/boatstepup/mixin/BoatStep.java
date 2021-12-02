@@ -23,18 +23,36 @@ public abstract class BoatStep extends Entity {
         super(type, world);
     }
 
-    // This is how much higher the fluid height can be than the top of the boat.
-    // Since the top of the boat is almost at the fluid height this wouldn't allow for swimming up stream as even
-    // the slightest dip would make the boat sink.
+
+    /**
+     * A generous approximation of the <a href="https://en.wikipedia.org/wiki/Freeboard_(nautical)">freeboard</a>.<br/>
+     * It is calculated as the boat height * someFactor.
+     * Here 2/9 is used as 'padding' but the correct value would be 0.35 (ca. 3/9).
+     */
+    private double approximateFreeboard() {
+        return this.getHeight() * (2d/9d);
+    }
+
+    /**
+     * This constant changes how much higher the fluid height can be than the top of the boat.
+     * As the <a href="https://en.wikipedia.org/wiki/Freeboard_(nautical)">freeboard</a> (1.6875/9) is insufficient
+     * to clear the gap between a still (level 8/9) and a shallow (level 1/9) flowing water source that is one block higher (2/9)
+     * it is not possible to swim upstream in vanilla minecraft.<br/>
+     * The configured waterStepHeight does not consider the already-present freeboard so it's subtracted first.
+     * A waterStepHeight of 2 would have an extra 0.3125/9 as padding (actual freeboard would be 2.3125/9).
+     * The magic number 9 is from {@link net.minecraft.fluid.FlowableFluid#getHeight(net.minecraft.fluid.FluidState) FlowableFluid.getHeight()}
+     */
     @ModifyConstant(
             constant = @Constant(doubleValue = 0.001, ordinal = 0),
             method = "getUnderWaterLocation()Lnet/minecraft/entity/vehicle/BoatEntity$Location;")
     private double changeUnderWaterHeight(double padding) {
-        return 0.001 + Main.CONFIG.waterStepHeight / 9d;
+        return (Main.CONFIG.waterStepHeight / 9d) - approximateFreeboard();
     }
 
-    // Minecraft only checks the blocks at the bottom bounds of the boat but not at the top which can lead to an
-    // incorrect waterLevel value;
+    /**
+     * Minecraft only checks the blocks at the bottom bounds of the boat but not at the top which can lead to an
+     * incorrect {@link BoatEntity#waterLevel} value.
+      */
     @ModifyVariable(
             at = @At(value = "STORE", ordinal = 0), index = 5,
             method = "checkBoatInWater()Z")

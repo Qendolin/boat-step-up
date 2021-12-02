@@ -1,7 +1,6 @@
 package com.qendolin.boatstepup.config;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.qendolin.boatstepup.Main;
 import net.fabricmc.loader.api.FabricLoader;
@@ -10,8 +9,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
 
@@ -31,6 +30,7 @@ public class ConfigLoader {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     public static <T extends Config> T createOrLoad(Class<T> configClazz) {
         FabricLoader loader = FabricLoader.getInstance();
 
@@ -53,6 +53,7 @@ public class ConfigLoader {
             try (FileReader fileReader = new FileReader(configFile)) {
                 JsonReader jsonReader = new JsonReader(fileReader);
                 jsonReader.setLenient(true);
+                // Static JsonParser.parse is not supported in minecraft 1.17
                 JsonParser parser = new JsonParser();
                 JsonObject object = parser.parse(fileReader).getAsJsonObject();
                 int saveVersion = object.get("__version").getAsInt();
@@ -61,7 +62,8 @@ public class ConfigLoader {
                     Main.LOGGER.info("Loaded config '{}'.", configFileName);
                     return config;
                 } else {
-                    Main.LOGGER.info("Saved config has old version, discarding.");
+                    Main.LOGGER.info("Saved config has old version, making backup and overwriting...");
+                    Files.copy(configFile.toPath(), Path.of(loader.getConfigDir().toString(), configFileName.replaceAll("\\.json$", "-old.json")), StandardCopyOption.REPLACE_EXISTING);
                 }
             } catch (Exception e) {
                 Main.LOGGER.error("Cannot load config!", e);

@@ -11,8 +11,8 @@ Can be changed `config/boat_step_up.json`, reload required.
 
 * groundStepHeight *(default 0.25)*  
     The height difference that a boat can 'step up'.
-* waterStepHeight *(default 2)*  
-    The water level (out of 9) that the boat can swim up without sinking.
+* waterStepHeight *(default 3)*  
+    The water level difference (out of 9) that the boat can swim up without sinking.
 
 ## License
 

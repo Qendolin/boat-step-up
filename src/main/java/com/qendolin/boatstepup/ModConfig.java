@@ -4,8 +4,8 @@ package com.qendolin.boatstepup;
 import com.qendolin.boatstepup.config.Config;
 import com.qendolin.boatstepup.config.GsonConfig;
 
-@GsonConfig(Main.MODID)
+@GsonConfig(value = Main.MODID, version = 2)
 public class ModConfig implements Config {
     public float groundStepHeight = 0.25f;
-    public int waterStepHeight = 2;
+    public float waterStepHeight = 3;
 }

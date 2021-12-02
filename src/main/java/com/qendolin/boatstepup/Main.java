@@ -12,6 +12,6 @@ public class Main implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
+        LOGGER.info("{} initialized.", MODID);
     }
 }

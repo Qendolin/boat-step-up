@@ -4,25 +4,31 @@ import com.qendolin.boatstepup.Main;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BoatEntity.class)
 public abstract class BoatStep extends Entity {
-    {
-        stepHeight = Main.CONFIG.groundStepHeight;
-    }
-
     public BoatStep(EntityType<?> type, World world) {
         super(type, world);
     }
 
+//    Since the config is not dynamically changeable this shouldn't be needed
+//    @Inject(at = @At("HEAD"), method = "tick()V")
+//    private void setStepHeight(CallbackInfo ci) {
+//        if(world.isClient() && Main.RUNTIME_CONFIG.serverEnabled)
+//            this.stepHeight = Main.RUNTIME_CONFIG.groundStepHeight;
+//    }
+
+    @Inject(at = @At("TAIL"), method = "<init>*")
+    private void setStepHeightCtor(CallbackInfo ci) {
+        if(!world.isClient() || Main.RUNTIME_CONFIG.serverEnabled)
+            this.stepHeight = Main.RUNTIME_CONFIG.groundStepHeight;
+    }
 
     /**
      * A generous approximation of the <a href="https://en.wikipedia.org/wiki/Freeboard_(nautical)">freeboard</a>.<br/>
@@ -46,7 +52,8 @@ public abstract class BoatStep extends Entity {
             constant = @Constant(doubleValue = 0.001, ordinal = 0),
             method = "getUnderWaterLocation()Lnet/minecraft/entity/vehicle/BoatEntity$Location;")
     private double changeUnderWaterHeight(double padding) {
-        return (Main.CONFIG.waterStepHeight / 9d) - approximateFreeboard();
+        if(!Main.RUNTIME_CONFIG.serverEnabled) return padding;
+        return (Main.RUNTIME_CONFIG.waterStepHeight / 9d) - approximateFreeboard();
     }
 
     /**
@@ -57,6 +64,7 @@ public abstract class BoatStep extends Entity {
             at = @At(value = "STORE", ordinal = 0), index = 5,
             method = "checkBoatInWater()Z")
     private int changeInWaterCheckHeight(int maxY) {
+        if(!Main.RUNTIME_CONFIG.serverEnabled) return maxY;
         return MathHelper.ceil(this.getBoundingBox().maxY);
     }
 }

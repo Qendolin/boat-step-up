@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "com.qendolin.boatstepup.Main"
+    ],
+    "client": [
+      "com.qendolin.boatstepup.Main"
     ]
   },
   "mixins": [
@@ -29,6 +32,7 @@
   "depends": {
     "fabricloader": ">=0.11.3",
     "minecraft": ["1.17.x", "1.18.x"],
-    "java": ">=17"
+    "java": ">=17",
+    "fabric": "*"
   }
 }

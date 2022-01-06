@@ -11,6 +11,7 @@ It is required on server and client.
 
 - Fabric API  
 *(Technically just Fabric Networking API v1)*
+- ModMenu **(Optional)**
 
 ## Config
 

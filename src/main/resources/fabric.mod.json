@@ -23,6 +23,9 @@
     ],
     "client": [
       "com.qendolin.boatstepup.Main"
+    ],
+    "modmenu": [
+      "com.qendolin.boatstepup.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -34,5 +37,8 @@
     "minecraft": ["1.17.x", "1.18.x"],
     "java": ">=17",
     "fabric": "*"
+  },
+  "recommends": {
+    "modmenu": "*"
   }
 }

@@ -1,3 +1,7 @@
+1.2.1
+-----
+* Add Mod Menu integration
+
 1.2.0
 -----
  * Fix issue [#1](https://github.com/Qendolin/boat-step-up/issues/1) *Dedicated server inconsistencies*

@@ -1,12 +1,11 @@
 package com.qendolin.boatstepup;
 
-import com.qendolin.boatstepup.config.ConfigLoader;
+import com.qendolin.boatstepup.config.ConfigManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 public class Main implements ModInitializer, ClientModInitializer {
     public static final String MODID = "boat_step_up";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
-    public static final ModConfig CONFIG = ConfigLoader.createOrLoad(ModConfig.class);
+    public static final ModConfig CONFIG = ConfigManager.createOrLoad(new ModConfig());
     public static final ModConfig RUNTIME_CONFIG = new ModConfig().copyFrom(CONFIG);
     public static final Identifier CONFIG_PACKET_ID = new Identifier(MODID, "config");
 
@@ -22,10 +21,8 @@ public class Main implements ModInitializer, ClientModInitializer {
     public void onInitialize() {
         ServerPlayConnectionEvents.INIT.register((handler, server) -> {
             // I have no idea
-            ServerPlayNetworking.send(handler.player, CONFIG_PACKET_ID, RUNTIME_CONFIG.writePacket());
+            CONFIG.syncToClient(handler.getPlayer());
         });
-        LOGGER.info("Local config: {}", CONFIG);
-        LOGGER.info("Runtime config: {}", RUNTIME_CONFIG);
     }
 
     @Override

@@ -1,0 +1,9 @@
+{
+  "boat_step_up.config.title": "Boat Step Up Config",
+  "boat_step_up.config.entry.groundStepHeight": "Ground Step Height",
+  "boat_step_up.config.entry.groundStepHeight.tooltip": "In 16th of a block",
+  "boat_step_up.config.entry.waterStepHeight": "Water Step Height",
+  "boat_step_up.config.entry.waterStepHeight.tooltip": "In water levels",
+  "boat_step_up.config.notInstalledOnServer": "Boat Step Up is not installed on this server",
+  "boat_step_up.config.usingServerConfig": "Using server config"
+}

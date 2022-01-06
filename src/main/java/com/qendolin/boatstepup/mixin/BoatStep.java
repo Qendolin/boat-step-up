@@ -17,12 +17,11 @@ public abstract class BoatStep extends Entity {
         super(type, world);
     }
 
-//    Since the config is not dynamically changeable this shouldn't be needed
-//    @Inject(at = @At("HEAD"), method = "tick()V")
-//    private void setStepHeight(CallbackInfo ci) {
-//        if(world.isClient() && Main.RUNTIME_CONFIG.serverEnabled)
-//            this.stepHeight = Main.RUNTIME_CONFIG.groundStepHeight;
-//    }
+    @Inject(at = @At("HEAD"), method = "tick()V")
+    private void setStepHeight(CallbackInfo ci) {
+        if(world.isClient && Main.RUNTIME_CONFIG.serverEnabled)
+            this.stepHeight = Main.RUNTIME_CONFIG.groundStepHeight;
+    }
 
     @Inject(at = @At("TAIL"), method = "<init>*")
     private void setStepHeightCtor(CallbackInfo ci) {

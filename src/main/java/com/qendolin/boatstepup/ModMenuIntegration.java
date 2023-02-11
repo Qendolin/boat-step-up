@@ -8,7 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class ModMenuIntegration implements ModMenuApi {
 
     static class CustomConfigScreen extends ConfigScreen<ModConfig> {
 
-        private final TranslatableText notInstalledText = new TranslatableText("boat_step_up.config.notInstalledOnServer");
-        private final TranslatableText usingServerText = new TranslatableText("boat_step_up.config.usingServerConfig");
+        private final Text notInstalledText = Text.translatable("boat_step_up.config.notInstalledOnServer");
+        private final Text usingServerText = Text.translatable("boat_step_up.config.usingServerConfig");
 
         public CustomConfigScreen(Screen parent, ModConfig config) {
             super(parent, config, CustomConfigScreen::onClose);

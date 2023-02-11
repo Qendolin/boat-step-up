@@ -4,7 +4,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -34,7 +34,7 @@ public class ConfigScreen<C extends Config> extends Screen {
     }
 
     public ConfigScreen(Screen parent, C config) {
-        super(new TranslatableText(config.getId()+".config.title"));
+        super(Text.translatable(config.getId()+".config.title"));
         this.parent = parent;
         this.config = config;
         this.onClose = ConfigScreen::onCloseDefault;
@@ -42,7 +42,7 @@ public class ConfigScreen<C extends Config> extends Screen {
     }
 
     public ConfigScreen(Screen parent, C config, CloseAction<C> onClose) {
-        super(new TranslatableText(config.getId() + ".config.title"));
+        super(Text.translatable(config.getId() + ".config.title"));
         this.parent = parent;
         this.config = config;
         this.onClose = onClose;
@@ -93,12 +93,12 @@ public class ConfigScreen<C extends Config> extends Screen {
         int sx = 20;
         for (ConfigEntry entry : entries.values()) {
             int centerY = entry.y + entry.height / 2 - textRenderer.fontHeight / 2;
-            TranslatableText text = new TranslatableText(translationKeyPrefix + entry.name);
+            Text text = Text.translatable(translationKeyPrefix + entry.name);
             drawTextWithShadow(matrices, textRenderer, text, sx, centerY, 0xffffff);
 
             String tooltipKey = translationKeyPrefix + entry.name + ".tooltip";
             if(mouseX > sx && mouseX < sx + textRenderer.getWidth(text) && mouseY > entry.y && mouseY < entry.y + entry.height) {
-                renderTooltip(matrices, new TranslatableText(tooltipKey), mouseX, mouseY);
+                renderTooltip(matrices, Text.translatable(tooltipKey), mouseX, mouseY);
             }
         }
     }
@@ -109,11 +109,11 @@ public class ConfigScreen<C extends Config> extends Screen {
 
         final List<EntryValueSetter<?>> valueSetters = new ArrayList<>();
 
-        doneButton = addDrawableChild(new ButtonWidget(this.width/2 + 4,this.height - 20 - 8,150,20, new TranslatableText("gui.done"), (button) -> {
+        doneButton = addDrawableChild(new ButtonWidget(this.width/2 + 4,this.height - 20 - 8,150,20, Text.translatable("gui.done"), (button) -> {
             client.setScreen(parent);
             onClose.invoke(true, this.config, valueSetters);
         }));
-        addDrawableChild(new ButtonWidget(this.width/2 - 150 - 4,this.height - 20 - 8,150,20, new TranslatableText("gui.cancel"), (button) -> {
+        addDrawableChild(new ButtonWidget(this.width/2 - 150 - 4,this.height - 20 - 8,150,20, Text.translatable("gui.cancel"), (button) -> {
             client.setScreen(parent);
             onClose.invoke(false, this.config, valueSetters);
         }));
@@ -126,12 +126,12 @@ public class ConfigScreen<C extends Config> extends Screen {
                     WidgetFactory provider = annotationWidgetFactories.getOrDefault(annotation.annotationType(), null);
                     if(provider == null) continue;
                     String stringerName = (String) annotation.annotationType().getMethod("stringer").invoke(annotation);
-                    ClickableWidget widget = provider.create(annotation, sx, sy, 200, 20, field, config, getStringer(stringerName));
+                    ClickableWidget widget = provider.create(annotation, sx, sy, 200, 20, field, config, stringerName.isEmpty() ? null : getStringer(stringerName));
 
                     entries.put(field.getName(), new ConfigEntry(field.getName(), field, widget.y, widget.x, widget.getHeight(), widget.getWidth(), widget));
                     valueSetters.add(new EntryValueSetter<>(field, ((ValueHolder<?>) widget)::getValue));
                     addDrawableChild(widget);
-                    sy += widget.getHeight() + 10;
+                    sy += widget.getHeight() + 2;
                 }
             }
         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

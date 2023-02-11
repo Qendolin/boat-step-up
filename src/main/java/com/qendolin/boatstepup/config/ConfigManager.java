@@ -52,7 +52,7 @@ public class ConfigManager {
         json.getAsJsonObject().addProperty("__version", config.getVersion());
         String jsonString = GSON.toJson(json);
         try {
-            Files.writeString(configPath, jsonString, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+            Files.writeString(configPath, jsonString, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             LOGGER.error("Cannot write config!", e);
         }
